@@ -42,12 +42,6 @@ window.onload = function () {
 		moveUnit(toX, toY, xSpeed, ySpeed);
 	}, 1000 / framesPerSecond);
 
-	// canvas.addEventListener('mousemove',
-	// 	function (evt) {
-	// 		var mousePos = calculateMousePos(evt);
-	// 		paddle1Y = mousePos.y - (PADDLE_HEIGHT / 2);
-	// 	});
-
 	canvas.addEventListener('mousedown',
 		function (evt) {
 		let targetToX;
@@ -85,35 +79,39 @@ function moveUnit(x, y, xSpeed, ySpeed) {
 	let yMovingPlus = ballY + ySpeed;
 	let yMovingMinus = ballY - ySpeed;
 
-	if (ballX < x) {
-		ballX = xMovingPlus;
-		if (xMovingPlus > x) {
-			ballX = x;
-		}
-	}
+	let unitX = ballX;
+	let unitY = ballY;
 
-	if (ballX > x) {
-		ballX = xMovingMinus;
+	if (ballX < x) {
+		if (xMovingPlus > x) {
+			unitX = x;
+		} else {
+			unitX = xMovingPlus;
+		}
+	} else if (ballX > x) {
 		if (xMovingPlus < x) {
-			ballX = x;
+			unitX = x;
+		} else {
+			unitX = xMovingMinus;
 		}
 	}
 
 	if (ballY < y) {
-		ballY = yMovingPlus;
 		if (yMovingPlus > y) {
-			ballY = y;
+			unitY = y;
+		} else {
+			unitY = yMovingPlus;
 		}
-	}
-
-	if (ballY > y) {
-		ballY = yMovingMinus;
+	} else if (ballY > y) {
 		if (yMovingPlus < y) {
-			ballY = y;
+			unitY = y;
+		} else {
+			unitY = yMovingMinus;
 		}
 	}
 
-
+	ballX = unitX;
+	ballY = unitY;
 }
 
 function drawEverything() {
