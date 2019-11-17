@@ -1,7 +1,7 @@
 var canvas,
 	canvasContext,
-	ballX = 300,
-	ballY = 200,
+	ballX = 400,
+	ballY = 300,
 	ballSpeedX = 10,
 	ballSpeedY = 4,
 	player1Score = 0,
@@ -33,7 +33,7 @@ window.onload = function () {
 	canvas = document.getElementById('pongCanvas');
 	canvasContext = canvas.getContext('2d');
 	
-	var framesPerSecond = 60;
+	var framesPerSecond = 30;
 	
 	setInterval(function () {
 		drawEverything();
@@ -50,43 +50,58 @@ window.onload = function () {
 		function (evt) {
 			toX = evt.layerX;
 			toY = evt.layerY;
+			console.log(toX, 'x');
+			console.log(toY, 'y');
+			console.log(toX/toY);
+			console.log((toY/toX));
 		});
 };
 
-function moveUnit(x, y, speed) {
+function moveUnit(x, y, s) {
 	if (x === ballX && y === ballY) return;
-	let xMovingPlus = ballX + speed;
-	let xMovingPlusHalfSpeed = ballX + speed/2;
-	let xMovingMinus = ballX - speed;
-	let xMovingMinusHalfSpeed = ballX - speed/2;
-	let yMovingPlus = ballY + speed;
-	let yMovingPlusHalfSpeed = ballY + speed/2;
-	let yMovingMinus = ballY - speed;
-	let yMovingMinusHalfSpeed = ballY - speed/2;
+	let xSpeed = s;
+	let ySpeed = s;
 	
-	if (ballX < x && ballX < y) {
-		ballX = xMovingPlusHalfSpeed;
-		ballY = yMovingPlusHalfSpeed;
-		return;
+	if (Math.abs(x) > Math.abs(y)) {
+		xSpeed = xSpeed/(toX/toY);
+		// ySpeed = ySpeed/((toX/toY).toFixed(1) * 2);
+	}
+	if (Math.abs(x) < Math.abs(y)) {
+		ySpeed = ySpeed/(toY/toX);
+		// xSpeed = xSpeed/((toY/toX).toFixed(1) * 2);
 	}
 	
-	if (ballX < x && ballX > y) {
-		ballX = xMovingPlusHalfSpeed;
-		ballY = yMovingMinusHalfSpeed;
-		return;
-	}
-	
-	if (ballX > x && ballX > y) {
-		ballX = xMovingMinusHalfSpeed;
-		ballY = yMovingMinusHalfSpeed;
-		return;
-	}
-	
-	if (ballX > x && ballX < y) {
-		ballX = xMovingMinusHalfSpeed;
-		ballY = yMovingMinusHalfSpeed;
-		return;
-	}
+	let xMovingPlus = ballX + xSpeed;
+	let xMovingPlusHalfSpeed = ballX + xSpeed / 2;
+	let xMovingMinus = ballX - xSpeed;
+	let xMovingMinusHalfSpeed = ballX - xSpeed / 2;
+	let yMovingPlus = ballY + ySpeed;
+	let yMovingPlusHalfSpeed = ballY + ySpeed / 2;
+	let yMovingMinus = ballY - ySpeed;
+	let yMovingMinusHalfSpeed = ballY - ySpeed / 2;
+	// if (ballX < x && ballX < y) {
+	// 	ballX = xMovingPlusHalfSpeed;
+	// 	ballY = yMovingPlusHalfSpeed;
+	// 	return;
+	// }
+	//
+	// if (ballX < x && ballX > y) {
+	// 	ballX = xMovingPlusHalfSpeed;
+	// 	ballY = yMovingMinusHalfSpeed;
+	// 	return;
+	// }
+	//
+	// if (ballX > x && ballX > y) {
+	// 	ballX = xMovingMinusHalfSpeed;
+	// 	ballY = yMovingMinusHalfSpeed;
+	// 	return;
+	// }
+	//
+	// if (ballX > x && ballX < y) {
+	// 	ballX = xMovingMinusHalfSpeed;
+	// 	ballY = yMovingMinusHalfSpeed;
+	// 	return;
+	// }
 	
 	if (ballX < x) {
 		ballX = xMovingPlus;
@@ -102,7 +117,6 @@ function moveUnit(x, y, speed) {
 		}
 	}
 	
-	
 	if (ballY < y) {
 		ballY = yMovingPlus;
 		if (yMovingPlus > y) {
@@ -112,7 +126,7 @@ function moveUnit(x, y, speed) {
 	
 	if (ballY > y) {
 		ballY = yMovingMinus;
-		if (xMovingPlus < y) {
+		if (yMovingPlus < y) {
 			ballY = y;
 		}
 	}
