@@ -14,9 +14,11 @@ var showingWinScreen = false,
 const PADDLE_THICKNESS = 10;
 const PADDLE_HEIGHT = 100;
 
-var speed = 10;
+var speed = 5;
 var toX = ballX;
 var toY = ballY;
+var xSpeed = speed;
+var ySpeed = speed;
 
 function calculateMousePos(evt) {
 	var rect = canvas.getBoundingClientRect(),
@@ -32,125 +34,107 @@ function calculateMousePos(evt) {
 window.onload = function () {
 	canvas = document.getElementById('pongCanvas');
 	canvasContext = canvas.getContext('2d');
-	
-	var framesPerSecond = 30;
-	
+
+	var framesPerSecond = 60;
+
 	setInterval(function () {
 		drawEverything();
-		moveUnit(toX, toY, speed);
+		moveUnit(toX, toY, xSpeed, ySpeed);
 	}, 1000 / framesPerSecond);
-	
+
 	// canvas.addEventListener('mousemove',
 	// 	function (evt) {
 	// 		var mousePos = calculateMousePos(evt);
 	// 		paddle1Y = mousePos.y - (PADDLE_HEIGHT / 2);
 	// 	});
-	
+
 	canvas.addEventListener('mousedown',
 		function (evt) {
+		let targetToX;
+		let targetToY;
 			toX = evt.layerX;
 			toY = evt.layerY;
-			console.log(toX, 'x');
-			console.log(toY, 'y');
-			console.log(toX/toY);
-			console.log((toY/toX));
+			xSpeed = speed;
+			ySpeed = speed;
+
+			if (Math.abs(ballX) > Math.abs(toX)) {
+				targetToX = Math.abs(ballX) - Math.abs(toX);
+			} else {
+				targetToX = Math.abs(toX) - Math.abs(ballX);
+			}
+
+			if (Math.abs(ballY) > Math.abs(toY)) {
+				targetToY = Math.abs(ballY) - Math.abs(toY);
+			} else {
+				targetToY = Math.abs(toY) - Math.abs(ballY);
+			}
+
+			if (Math.abs(targetToX) > Math.abs(targetToY)) {
+				ySpeed = ySpeed/(targetToX/targetToY);
+			}
+			if (Math.abs(targetToX) < Math.abs(targetToY)) {
+				xSpeed = xSpeed/(targetToY/targetToX);
+			}
 		});
 };
 
-function moveUnit(x, y, s) {
+function moveUnit(x, y, xSpeed, ySpeed) {
 	if (x === ballX && y === ballY) return;
-	let xSpeed = s;
-	let ySpeed = s;
-	
-	if (Math.abs(x) > Math.abs(y)) {
-		xSpeed = xSpeed/(toX/toY);
-		// ySpeed = ySpeed/((toX/toY).toFixed(1) * 2);
-	}
-	if (Math.abs(x) < Math.abs(y)) {
-		ySpeed = ySpeed/(toY/toX);
-		// xSpeed = xSpeed/((toY/toX).toFixed(1) * 2);
-	}
-	
 	let xMovingPlus = ballX + xSpeed;
-	let xMovingPlusHalfSpeed = ballX + xSpeed / 2;
 	let xMovingMinus = ballX - xSpeed;
-	let xMovingMinusHalfSpeed = ballX - xSpeed / 2;
 	let yMovingPlus = ballY + ySpeed;
-	let yMovingPlusHalfSpeed = ballY + ySpeed / 2;
 	let yMovingMinus = ballY - ySpeed;
-	let yMovingMinusHalfSpeed = ballY - ySpeed / 2;
-	// if (ballX < x && ballX < y) {
-	// 	ballX = xMovingPlusHalfSpeed;
-	// 	ballY = yMovingPlusHalfSpeed;
-	// 	return;
-	// }
-	//
-	// if (ballX < x && ballX > y) {
-	// 	ballX = xMovingPlusHalfSpeed;
-	// 	ballY = yMovingMinusHalfSpeed;
-	// 	return;
-	// }
-	//
-	// if (ballX > x && ballX > y) {
-	// 	ballX = xMovingMinusHalfSpeed;
-	// 	ballY = yMovingMinusHalfSpeed;
-	// 	return;
-	// }
-	//
-	// if (ballX > x && ballX < y) {
-	// 	ballX = xMovingMinusHalfSpeed;
-	// 	ballY = yMovingMinusHalfSpeed;
-	// 	return;
-	// }
-	
+
 	if (ballX < x) {
 		ballX = xMovingPlus;
 		if (xMovingPlus > x) {
 			ballX = x;
 		}
 	}
-	
+
 	if (ballX > x) {
 		ballX = xMovingMinus;
 		if (xMovingPlus < x) {
 			ballX = x;
 		}
 	}
-	
+
 	if (ballY < y) {
 		ballY = yMovingPlus;
 		if (yMovingPlus > y) {
 			ballY = y;
 		}
 	}
-	
+
 	if (ballY > y) {
 		ballY = yMovingMinus;
 		if (yMovingPlus < y) {
 			ballY = y;
 		}
 	}
+
+
 }
 
 function drawEverything() {
 	// next line blanks out the screen with black
 	colorRect(0, 0, canvas.width, canvas.height, 'black');
-	
+
 	if (showingWinScreen) {
 		canvasContext.fillStyle = 'white';
 		canvasContext.fillText('click to continue', 100, 100);
 		return;
 	}
-	
+
 	// this is left player paddle
 	// colorRect(0, paddle1Y, PADDLE_THICKNESS, PADDLE_HEIGHT, 'white');
-	
+
 	// this is right computer paddle
 	// colorRect(canvas.width - PADDLE_THICKNESS, paddle2Y, PADDLE_THICKNESS, PADDLE_HEIGHT, 'white');
-	
+
 	// next line draws the ball
 	colorCircle(ballX, ballY, 7, 'white');
-	
+
 	// canvasContext.fillText(player1Score, 100, 100);
 	// canvasContext.fillText(player2Score, canvas.width - 100, 100);
 }
