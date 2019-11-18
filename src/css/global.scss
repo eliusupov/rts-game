@@ -1,0 +1,40 @@
+body {
+	direction: rtl;
+}
+
+.buttonNoStyle {
+	outline: none;
+	background: none;
+	border: none;
+}
+
+.buttonLink {
+	outline: none;
+	background: none;
+	border: none;
+	color: #4bb0dd;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.buttonBlue {
+	width: 100%;
+	outline: none;
+	border: none;
+	line-height: 43px;
+	border-radius: 21.5px;
+	background-color: #4bb0dd;
+	font-size: 18px;
+	font-weight: bold;
+	color: #ffffff;
+	cursor: pointer;
+}
+
+.spanLink {
+	outline: none;
+	background: none;
+	border: none;
+	color: #4bb0dd;
+	text-decoration: underline;
+	cursor: pointer;
+}
