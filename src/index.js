@@ -20,39 +20,6 @@ function calculateMousePos(evt) {
 	};
 }
 
-function calculateSpeed(unit, toX, toY) {
-	let targetToX;
-	let targetToY;
-	const unitX = unit.posX;
-	const unitY = unit.posY;
-	let xSpeed = unit.minSpeed;
-	let ySpeed = unit.minSpeed;
-
-	// let xSpeed = unit.xSpeed < unit.minSpeed ? unit.minSpeed : unit.xSpeed;
-	// let ySpeed = unit.ySpeed < unit.minSpeed ? unit.minSpeed : unit.ySpeed;
-
-	if (Math.abs(unitX) > Math.abs(toX)) {
-		targetToX = Math.abs(unitX) - Math.abs(toX);
-	} else {
-		targetToX = Math.abs(toX) - Math.abs(unitX);
-	}
-
-	if (Math.abs(unitY) > Math.abs(toY)) {
-		targetToY = Math.abs(unitY) - Math.abs(toY);
-	} else {
-		targetToY = Math.abs(toY) - Math.abs(unitY);
-	}
-
-	if (Math.abs(targetToX) > Math.abs(targetToY)) {
-		ySpeed = ySpeed / (targetToX / targetToY);
-	}
-	if (Math.abs(targetToX) < Math.abs(targetToY)) {
-		xSpeed = xSpeed / (targetToY / targetToX);
-	}
-
-	return unit.setSpeed(xSpeed, ySpeed);
-}
-
 function drawEverything(canvasContext) {
 	// next line blanks out the screen with black
 	colorRect(0, 0, canvas.width, canvas.height, 'black');
@@ -69,10 +36,8 @@ window.onload = function() {
 	}, 1000 / framesPerSecond);
 
 	canvas.addEventListener('mousedown', function(evt) {
-		// calculateSpeed(unit, evt.layerX, evt.layerY);
 		toX = evt.layerX;
 		toY = evt.layerY;
-		unit.calculateSpeed(toX, toY);
 	});
 };
 

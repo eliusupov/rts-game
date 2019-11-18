@@ -1,3 +1,5 @@
+// TODO write all with this and not variables
+
 class Unit {
 	constructor(posX, posY) {
 		this.setPos(posX, posY);
@@ -7,30 +9,18 @@ class Unit {
 
 	posY = 300;
 
-	xSpeed = 1;
+	xSpeed = 0.1;
 
-	ySpeed = 1;
+	ySpeed = 0.1;
 
-	maxSpeed = 10;
+	maxSpeed = 4;
 
-	acceleration = 0.1;
+	acceleration = 0.05;
 
 	minSpeed = 0.1;
 
 	initialise = (canvasContext, toX, toY) => {
-		// if (this.xSpeed < this.maxSpeed) {
-		// 	this.setSpeed(this.xSpeed + this.acceleration, this.ySpeed)
-		// } else {
-		// 	this.setSpeed(this.maxSpeed, this.ySpeed)
-		// }
-		//
-		// if (this.ySpeed < this.maxSpeed) {
-		// 	this.setSpeed(this.xSpeed, this.ySpeed + this.acceleration)
-		// } else {
-		// 	this.setSpeed(this.xSpeed, this.maxSpeed)
-		// }
 		this.draw(canvasContext);
-		// this.calculateSpeed(toX, toY);
 		this.move(toX, toY, this.xSpeed, this.ySpeed);
 	};
 
@@ -41,24 +31,26 @@ class Unit {
 		canvasContext.fill();
 	};
 
-	move = (x, y, xSpeed, ySpeed) => {
+	move = (x, y) => {
 		if (!x || !y) return;
 		if (x === this.posX && y === this.posY) return;
-		const xMovingPlus = this.posX + xSpeed;
-		const xMovingMinus = this.posX - xSpeed;
-		const yMovingPlus = this.posY + ySpeed;
-		const yMovingMinus = this.posY - ySpeed;
-
 		let unitX = this.posX;
 		let unitY = this.posY;
+		const {x: xSpeed, y: ySpeed} = this.calculateSpeed(x, y);
+		const xMovingPlus = unitX + xSpeed;
+		const xMovingMinus = unitX - xSpeed;
+		const yMovingPlus = unitY + ySpeed;
+		const yMovingMinus = unitY - ySpeed;
+		// let setSpeedX = xSpeed;
+		// let setSpeedY = ySpeed;
 
-		if (this.posX < x) {
+		if (unitX < x) {
 			if (xMovingPlus > x) {
 				unitX = x;
 			} else {
 				unitX = xMovingPlus;
 			}
-		} else if (this.posX > x) {
+		} else if (unitX > x) {
 			if (xMovingPlus < x) {
 				unitX = x;
 			} else {
@@ -79,16 +71,12 @@ class Unit {
 				unitY = yMovingMinus;
 			}
 		}
-		if (unitX !== x) {
-			this.xSpeed = this.xSpeed + this.acceleration;
-		}
-		// if (unitY !== y) {
-		// 	// this.setSpeed(this.xSpeed, this.ySpeed + this.acceleration)
-		// }
+
 		this.setPos(unitX, unitY);
+		this.accelerate(x, y);
 	};
 
-	calculateSpeed(toX, toY) {
+	calculateSpeed = (toX, toY) => {
 		let targetToX;
 		let targetToY;
 		const unitX = this.posX;
@@ -96,22 +84,6 @@ class Unit {
 
 		let xSpeed = this.xSpeed;
 		let ySpeed = this.ySpeed;
-
-		// if (this.xSpeed < this.minSpeed) {
-		// 	xSpeed = this.minSpeed;
-		// } else if (this.xSpeed > this.maxSpeed) {
-		// 	xSpeed = this.maxSpeed;
-		// } else {
-		// 	xSpeed = this.xSpeed;
-		// }
-		//
-		// if (this.ySpeed < this.minSpeed) {
-		// 	ySpeed = this.minSpeed;
-		// } else if (this.ySpeed > this.maxSpeed) {
-		// 	ySpeed = this.maxSpeed;
-		// } else {
-		// 	ySpeed = this.ySpeed;
-		// }
 
 		if (Math.abs(unitX) > Math.abs(toX)) {
 			targetToX = Math.abs(unitX) - Math.abs(toX);
@@ -132,8 +104,35 @@ class Unit {
 			xSpeed = xSpeed / (targetToY / targetToX);
 		}
 
-		return this.setSpeed(xSpeed, ySpeed);
-	}
+		return {
+			x: xSpeed,
+			y: ySpeed,
+		}
+	};
+
+	accelerate = (x, y) =>	{
+		let unitX = this.posX;
+		let unitY = this.posY;
+		let setSpeedX = this.xSpeed;
+		let setSpeedY = this.ySpeed;
+
+		if (this.xSpeed < this.maxSpeed) {
+			setSpeedX = this.xSpeed + this.acceleration;
+		} else {
+			setSpeedX = this.maxSpeed;
+		}
+		if (this.ySpeed < this.maxSpeed) {
+			setSpeedY = this.ySpeed + this.acceleration;
+		} else {
+			setSpeedY = this.maxSpeed;
+		}
+		if (unitX === x && unitY === y) {
+			setSpeedX = this.minSpeed;
+			setSpeedY = this.minSpeed;
+		}
+
+		this.setSpeed(setSpeedX, setSpeedY);
+	};
 
 	setPos = (x, y) => {
 		this.posX = x;
