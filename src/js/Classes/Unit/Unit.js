@@ -9,15 +9,19 @@ class Unit {
 
 	posY = 300;
 
+	radius = 10;
+
 	xSpeed = 0.1;
 
 	ySpeed = 0.1;
 
 	maxSpeed = 4;
 
-	acceleration = 0.05;
+	acceleration = 0.1;
 
 	minSpeed = 0.1;
+
+	selected = false;
 
 	initialise = (canvasContext, toX, toY) => {
 		this.draw(canvasContext);
@@ -27,8 +31,15 @@ class Unit {
 	draw = canvasContext => {
 		canvasContext.fillStyle = 'white';
 		canvasContext.beginPath();
-		canvasContext.arc(this.posX, this.posY, 7, 0, Math.PI * 2, true);
+		canvasContext.arc(this.posX, this.posY, this.radius, 0, Math.PI * 2, true);
 		canvasContext.fill();
+		if (this.selected) {
+			canvasContext.strokeStyle = 'white';
+			canvasContext.beginPath();
+			canvasContext.arc(this.posX, this.posY, this.radius + 5, 0, Math.PI * 2, true);
+			canvasContext.stroke();
+			// canvasContext.fill();
+		}
 	};
 
 	move = (x, y) => {
@@ -36,7 +47,7 @@ class Unit {
 		if (x === this.posX && y === this.posY) return;
 		let unitX = this.posX;
 		let unitY = this.posY;
-		const {x: xSpeed, y: ySpeed} = this.calculateSpeed(x, y);
+		const { x: xSpeed, y: ySpeed } = this.calculateSpeed(x, y);
 		const xMovingPlus = unitX + xSpeed;
 		const xMovingMinus = unitX - xSpeed;
 		const yMovingPlus = unitY + ySpeed;
@@ -107,10 +118,10 @@ class Unit {
 		return {
 			x: xSpeed,
 			y: ySpeed,
-		}
+		};
 	};
 
-	accelerate = (x, y) =>	{
+	accelerate = (x, y) => {
 		let unitX = this.posX;
 		let unitY = this.posY;
 		let setSpeedX = this.xSpeed;
