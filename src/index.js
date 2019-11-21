@@ -10,6 +10,8 @@ const unit = new Unit(200, 300);
 const unit2 = new Unit(400, 300);
 const unit3 = new Unit(100, 300);
 
+const units = [unit, unit2, unit3];
+
 function calculateMousePos(evt) {
 	var rect = canvas.getBoundingClientRect(),
 		root = document.documentElement,
@@ -24,12 +26,12 @@ function calculateMousePos(evt) {
 function drawEverything(canvasContext) {
 	// next line blanks out the screen with black
 	colorRect(0, 0, canvas.width, canvas.height, 'black');
-	if (selectedUnit) {
-		selectedUnit.initialise(canvasContext, toX, toY);
-	}
-	unit3.initialise(canvasContext);
-	unit2.initialise(canvasContext);
-	unit.initialise(canvasContext);
+	units.forEach(e => {
+		if (e.selected) {
+			return e.initialise(canvasContext, toX, toY);
+		}
+		e.initialise(canvasContext);
+	})
 }
 
 window.onload = function() {
@@ -45,7 +47,7 @@ window.onload = function() {
 			toX = evt.layerX;
 			toY = evt.layerY;
 		}
-		const units = [unit, unit2, unit3];
+		
 		units.forEach(e => {
 			const xRange = {
 				from: e.posX - e.radius,
@@ -64,11 +66,10 @@ window.onload = function() {
 			) {
 				// debugger
 			} else {
-				units.forEach(el => el.selected = false)
-				selectedUnit = e;
-				selectedUnit.selected  = true;
-				toX = selectedUnit.posX;
-				toY = selectedUnit.posY;
+				units.forEach(el => (el.selected = false));
+				e.selected = true;
+				toX = e.posX;
+				toY = e.posY;
 			}
 		});
 	});
