@@ -1,86 +1,62 @@
 import Unit from './js/Classes/Unit/Unit';
+import Select from './js/Classes/Select/Select';
 
 var canvas;
 var canvasContext;
-var toX;
-var toY;
+var drawSelect = false;
 
-let selectedUnit;
+const select = new Select();
 const unit = new Unit(200, 300);
 const unit2 = new Unit(400, 300);
 const unit3 = new Unit(100, 300);
 
 const units = [unit, unit2, unit3];
 
-function calculateMousePos(evt) {
-	var rect = canvas.getBoundingClientRect(),
-		root = document.documentElement,
-		mouseX = evt.clientX - rect.left - root.scrollLeft,
-		mouseY = evt.clientY - rect.top - root.scrollTop;
-	return {
-		x: mouseX,
-		y: mouseY,
-	};
-}
-
 function drawEverything(canvasContext) {
 	// next line blanks out the screen with black
 	colorRect(0, 0, canvas.width, canvas.height, 'black');
-	units.forEach(e => {
-		if (e.selected) {
-			return e.initialise(canvasContext, toX, toY);
-		}
-		e.initialise(canvasContext);
-	})
+	units.forEach(e => e.initialise(canvasContext));
+	if (drawSelect) {
+		select.initialise(canvasContext);
+	}
 }
 
 window.onload = function() {
 	canvas = document.getElementById('pongCanvas');
 	canvasContext = canvas.getContext('2d');
-	var framesPerSecond = 60;
+	const framesPerSecond = 60;
 	setInterval(() => {
 		drawEverything(canvasContext);
 	}, 1000 / framesPerSecond);
 
 	canvas.addEventListener('mousedown', function(evt) {
-		if (evt.button === 2) {
-			toX = evt.layerX;
-			toY = evt.layerY;
+		if (evt.button === 2 && !drawSelect) {
+			units.forEach(e => e.selected && e.setTo(evt.layerX, evt.layerY));
+		} else if (!drawSelect) {
+			drawSelect = true;
+			select.setPos(evt.layerX, evt.layerY);
 		}
-		
-		units.forEach(e => {
-			const xRange = {
-				from: e.posX - e.radius,
-				to: e.posX + e.radius,
-			};
-			const yRange = {
-				from: e.posY - e.radius,
-				to: e.posY + e.radius,
-			};
-
-			if (
-				evt.layerX < xRange.from ||
-				evt.layerX > xRange.to ||
-				evt.layerY < yRange.from ||
-				evt.layerY > yRange.to
-			) {
-				// debugger
-			} else {
-				units.forEach(el => (el.selected = false));
-				e.selected = true;
-				toX = e.posX;
-				toY = e.posY;
-			}
-		});
 	});
-};
 
-function colorCircle(centerX, centerY, radius, drawColor) {
-	canvasContext.fillStyle = drawColor;
-	canvasContext.beginPath();
-	canvasContext.arc(centerX, centerY, radius, 0, Math.PI * 2, true);
-	canvasContext.fill();
-}
+	canvas.addEventListener('mouseup', evt => {
+		if (evt.button !== 2) {
+			units.forEach(e => {
+				const unitRangeX = {
+					from: e.posX - e.radius,
+					to: e.posX + e.radius,
+				};
+				const unitRangeY = {
+					from: e.posY - e.radius,
+					to: e.posY + e.radius,
+				};
+				e.selected = select.isUnitSelected(unitRangeX, unitRangeY);
+			});
+			drawSelect = false;
+		}
+	});
+
+	canvas.addEventListener('mousemove', e => select.setPosTo(e.layerX, e.layerY));
+};
 
 function colorRect(leftX, topY, width, height, drawColor) {
 	canvasContext.fillStyle = drawColor;

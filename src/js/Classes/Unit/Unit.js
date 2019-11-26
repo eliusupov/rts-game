@@ -9,6 +9,10 @@ class Unit {
 
 	posY = 300;
 
+	toX = 0;
+
+	toY = 0;
+
 	radius = 10;
 
 	xSpeed = 0.1;
@@ -23,9 +27,9 @@ class Unit {
 
 	selected = false;
 
-	initialise = (canvasContext, toX, toY) => {
+	initialise = canvasContext => {
 		this.draw(canvasContext);
-		this.move(toX, toY, this.xSpeed, this.ySpeed);
+		this.move(this.toX, this.toY, this.xSpeed, this.ySpeed);
 	};
 
 	draw = canvasContext => {
@@ -153,6 +157,11 @@ class Unit {
 	setSpeed = (x = this.xSpeed, y = this.ySpeed) => {
 		this.xSpeed = x;
 		this.ySpeed = y;
+	};
+
+	setTo = (toX, toY) => {
+		this.toX = toX;
+		this.toY = toY;
 	};
 
 	getPos = () => {
